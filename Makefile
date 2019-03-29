@@ -4,4 +4,4 @@ compile:
 publish: compile
 	npm publish
 installLocal: compile
-	npm install -g --progress=false .
+	npm install --progress=true .

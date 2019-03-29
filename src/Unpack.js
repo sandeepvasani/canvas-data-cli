@@ -47,37 +47,51 @@ class Unpack {
     }
     async.each(toUnpack, (table, cb) => {
       const inputDir = path.join(sourceDir, table.tableName)
-      const outputTableName = path.join(outputDir, table.tableName + '.txt')
-      const outputStream = fs.createWriteStream(outputTableName)
-      this.logger.info(`outputting ${table.tableName} to ${outputTableName}`)
-      this.processTable(table, inputDir, outputStream, (err) => {
+      const tableDir=path.join(outputDir, table.tableName)
+      mkdirp(tableDir, (err) => {
         if (err) return cb(err)
-        this.logger.info(`finished with ${table.tableName}`)
-        cb()
+        //const outputTableName = path.join(tableDir, table.tableName + '.txt')
+        //const outputStream = fs.createWriteStream(outputTableName)
+        //this.logger.info(`outputting ${table.tableName} to ${outputTableName}`)
+        this.processTable(table, inputDir, tableDir, (err) => {
+          if (err) return cb(err)
+          this.logger.info(`finished with ${table.tableName}`)
+          cb()
+        })
       })
     }, cb)
   }
-  processTable(table, inputDir, outputStream, cb) {
-    outputStream.write(this.buildTitlesHeader(table))
+  processTable(table, inputDir, tableDir, cb) {
+    
     fs.readdir(inputDir, (err, files) => {
-      if (err) return cb(err)
-      const streamCreators = files.map((f) => {
-        // return a function so that mulitstream
-        // lazily creates the streams
-        return function() {
-          const gunzip = zlib.createUnzip()
-          return fs.createReadStream(path.join(inputDir, f))
-          .pipe(gunzip)
-          .pipe(split())
-          .pipe(mapS((item, cb) => {
-            if (item.trim() === '') return cb()
-            // add newlines for each row
-            return cb(null, item + '\n')
-          }))
-        }
+      files = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
+      
+      files.map((f) => {
+            const outputTableName = path.join(tableDir, path.basename(f, '.gz') + '.txt')
+            fs.stat(outputTableName, (err, stat) => {
+              if(err == null) {
+                this.logger.info(`File ${f} has been already extracted`)
+              } else if(err.code === 'ENOENT') {
+                  // file does not exist
+                  const outputStream = fs.createWriteStream(outputTableName)
+                  outputStream.write(this.buildTitlesHeader(table))
+                  this.logger.info(`outputting ${f} to ${outputTableName}`)
+                  //this.logger.info(path.join(inputDir, f))
+                  const gunzip = zlib.createUnzip()
+                  fs.createReadStream(path.join(inputDir, f))
+                    .pipe(gunzip)
+                    .pipe(split())
+                    .pipe(mapS((item, callback) => {
+                      if (item.trim() === '') return callback()
+                      // add newlines for each row
+                      return callback(null, item + '\n')
+                    }))
+                    .pipe(outputStream);
+              } else {
+                this.logger.error(err)
+              }
+          })
       })
-      const multi = new Multistream(streamCreators)
-      pump(multi, outputStream, cb)
     })
   }
   run(cb) {

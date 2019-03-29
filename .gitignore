@@ -6,4 +6,3 @@ state.json
 report/
 .nyc_output/
 .DS_Store
-bin/
