@@ -7,10 +7,10 @@ NOTE: this is currently in beta, please report any bugs or issues you find!
 ### Prerequisites
 This tool should work on Linux, OSX, and Windows. The tool uses node.js runtime, which you will need to install before being able to use it.
 1. Install Node.js - Any version newer than 0.12.0 should work, best bet is to follow the instructions [here](https://nodejs.org/en/download/package-manager/)
-### Install via npm
-`npm install -g canvas-data-cli`
-### OR Install from github
-`git clone https://github.com/instructure/canvas-data-cli.git && cd canvas-data-cli && make installLocal`
+
+### Install from github
+`git clone https://github.com/splunk/canvas-cli.git && cd canvas-data-cli && make installLocal`
+
 ### Configuring
 The Canvas Data CLI requires a configuration file with a fields set. Canvas Data CLI uses a small javascript file as configuration file.
 To generate a stub of this configuration run `canvasDataCli sampleConfig` which will create a `config.js.sample` file. Rename this to a file, like `config.js`.

@@ -1,6 +1,6 @@
 {
   "name": "canvas-data-cli",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "A CLI tool for interacting with the Canvas Data API",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/instructure/canvas-data-cli.git"
+    "url": "git+https://github.com/splunk/canvas-cli.git"
   },
   "engines": {
     "node": ">=0.12.0"
@@ -31,9 +31,9 @@
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/instructure/canvas-data-cli/issues"
+    "url": "https://github.com/splunk/canvas-cli.git/issues"
   },
-  "homepage": "https://github.com/instructure/canvas-data-cli#readme",
+  "homepage": "https://github.com/splunk/canvas-cli.git#readme",
   "dependencies": {
     "async": "^1.5.0",
     "glob": "^7.0.3",
