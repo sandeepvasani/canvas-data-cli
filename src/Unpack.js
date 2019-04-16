@@ -37,7 +37,15 @@ class Unpack {
     for (let key in schema.schema) {
       let table = schema.schema[key]
       if (this.tableFilter.indexOf(table.tableName) >= 0 ) {
-        toUnpack.push(table)
+        try {
+          fs.statSync(path.join(sourceDir, table.tableName));
+          toUnpack.push(table)
+        }
+        catch (err) {
+         if (err.code === 'ENOENT') {
+            this.logger.warn(`${table.tableName} doesn't exist. Skipping`)
+          }
+        }
       }
     }
     this.logger.debug(`will unpack ${toUnpack.map((p) => p.tableName).join(',')}`)
